@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Card</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .width30 {
+            width: 35%;
+        }
+    </style>
+</head>
+</head>
+
+<body>
+    <div class="container mt-3 mainCont">
+
+        <div class="toast show mx-auto my-3">
+            <div class="toast-header bg-danger  ">
+                <strong class="me-auto text-white">Contact Card</strong>
+                <!-- <button type="button" class="btn-close" data-bs-dismiss="toast"></button>   -->
+            </div>
+            <div class="toast-body">
+                <div>
+                    <div class="mb-3 mt-3">
+                        <label for="name" class="form-label">Name:</label>
+                        <input type="text" class="form-control" id="name" placeholder="Enter Name" name="name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="num" class="form-label">Number:</label>
+                        <input type="number" class="form-control" id="num" placeholder="Enter Number" name="num">
+                    </div>
+
+                    <button type="button" class="btn btn-outline-success" id="btn">save</button>
+                    <button type="button" class="btn btn-outline-danger mx-3" id="btn2">remove all</button>
+                    <button class="btn btn-outline-danger my-3" type="button" data-bs-toggle="offcanvas"
+                        data-bs-target="#demo">
+                        delete contact
+                    </button>
+                    <button class="btn btn-outline-success my-3" type="button" data-bs-toggle="offcanvas"
+                        data-bs-target="#demo1">
+                        edit contact
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- Offcanvas Sidebar -->
+    <div class="offcanvas offcanvas-start" id="demo">
+        <div class="offcanvas-header">
+
+            <h1 class="offcanvas-title ">Which contact to delete</h1>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="mb-3 mt-3">
+                <label for="delname" class="form-label">Name:</label>
+                <input type="text" class="form-control" id="delname" placeholder="Enter Name" name="delname">
+            </div>
+            <!-- <div class="mb-3">
+                <label for="delnum" class="form-label">Number:</label>
+                <input type="number" class="form-control" id="delnum" placeholder="Enter Number" name="delnum">
+            </div> -->
+            <button type="button" class="btn btn-outline-danger mx-3" id="btn3">remove</button>
+
+
+
+        </div>
+    </div>
+    <div class="offcanvas offcanvas-start" id="demo1">
+        <div class="offcanvas-header">
+
+            <h1 class="offcanvas-title ">Edit your contact here</h1>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="mb-3 mt-3">
+                <label for="edname" class="form-label">Name:</label>
+                <input type="text" class="form-control" id="edname" placeholder="Enter Name" name="edname   ">
+            </div>
+            <div class="mb-3">
+                <label for="ednum" class="form-label">Number:</label>
+                <input type="number" class="form-control" id="ednum" placeholder="Enter Number" name="ednum">
+            </div>
+
+            <button type="button" class="btn btn-outline-success mx-3" id="btn4">edit contact</button>
+
+
+        </div>
+    </div>
+
+
+
+    <script>
+        window.addEventListener("load", () => {
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i); // Get the key
+                const value = localStorage.getItem(key); // Get the value
+                createContactCard(key, value); // Display it
+            }
+        });
+
+        function createContactCard(name, number) {
+            const div = document.createElement("div");
+            div.classList.add("alert", "alert-success", "width30", "mx-auto", "mt-3");
+            div.innerHTML = `<strong>${name}</strong><br>${number}`;
+            mainCont.appendChild(div);
+        }
+        let mainCont = document.querySelector(".mainCont");
+        let userName = document.getElementById("name");
+        let userNum = document.getElementById("num");
+        let btn = document.getElementById("btn");
+        let btn2 = document.getElementById("btn2");
+        let btn3 = document.getElementById("btn3");
+        let btn4 = document.getElementById("btn4");
+        let delname = document.getElementById("delname");
+        let edname = document.getElementById("edname");
+        let ednum = document.getElementById("ednum");
+
+
+        btn.addEventListener("click", () => {
+            userNameVal = userName.value;
+            userNumVal = userNum.value;
+            if (userNameVal !== "" && userNumVal !== "") {
+                if (!localStorage.getItem(userNameVal)) {
+                    createContactCard(userNameVal, userNumVal);
+                    localStorage.setItem(userNameVal, userNumVal);
+                } else {
+                    alert("This contact already exists.You can edit this contact instead");
+                    return
+                }
+                userName.value = "";
+                userNum.value = "";
+            } else {
+                alert("please fill all the details")
+                <!-- location.reload() -->
+                return  
+            }
+        })
+
+        btn2.addEventListener("click", () => {
+            localStorage.clear();
+            location.reload();
+        });
+        btn3.addEventListener("click", () => {
+
+            let delNameVAl = delname.value;
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                if (key == delNameVAl) {
+                    localStorage.removeItem(key)
+                    location.reload()
+
+                }
+            }
+        })
+        btn4.addEventListener("click", () => {
+            const edNameVal = edname.value.trim(); // Get the edited name
+            const edNumVal = ednum.value.trim();  // Get the edited number
+        
+            if (edNameVal === "" || edNumVal === "") {
+                alert("Please fill in both name and number fields.");
+                return;
+            }
+        
+            // Check if the contact exists in localStorage
+            if (localStorage.getItem(edNameVal)) {
+                // Update the number for the existing contact
+                localStorage.setItem(edNameVal, edNumVal);
+                  alert(`Contact for ${edNameVal} has been updated.`);
+                location.reload(); // Reload to reflect changes
+            } else {
+                // Contact does not exist
+                alert(`Contact with the name "${edNameVal}" does not exist.`);
+            }
+        });
+        
+    </script>
+</body>
+
+</html>
